@@ -1,0 +1,421 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <Myro.h>
+#include <stdlib.h>
+#include <sstream>
+#include <fstream>
+using namespace std;
+
+class babystat
+{
+public:
+  babystat(string inputName, char inputGender, int inputYear);
+	~babystat();
+	void setName(string inputName);
+	void setGender(char inputGender);
+	void setYearBorn(int inputYear);
+
+	vector <int> inputNameFrequency;
+	vector <int> popularGirlFrequency;
+	vector <int> popularBoyFrequency;
+	bool validName;
+	string mostPopGirl;
+	string mostPopBoy;
+	bool checkName();
+	void findFrequency(int whichVector);
+	int whichVector;
+	void findPopularNames();
+	void findPopularFrequency();
+	void makeOneGraph();
+	void makeComboGraph();
+//private:
+	string name;
+	char gender;
+	int yearBorn;
+};
+
+//#include <babystat.h>
+using namespace std;
+
+babystat::babystat (string inputName, char inputGender, int inputYear)
+{
+	cout << "The Constructor works!" << endl;
+	name=inputName;
+	gender=inputGender;
+	yearBorn=inputYear;
+	cout << "Really, it does" << endl;
+	/*
+	setName(inputName);
+	setGender(inputGender);
+	setYearBorn(inputYear);
+	*/
+}
+
+babystat::~babystat()
+{
+	name = " ";
+	gender=' ';
+	yearBorn=0;
+}
+
+void babystat::setName(string inputName)
+{
+	cout << "baby name recorded" << endl;
+	name = inputName;
+}
+
+void babystat::setGender(char inputGender)
+{
+	cout << "gender recorded" << endl;
+	gender = inputGender;
+}
+
+void babystat::setYearBorn(int inputYear)
+{
+	cout << "yr born recorded" << endl;
+	yearBorn = inputYear;
+}
+
+bool babystat::checkName()
+{
+	cout << "Checking to see if the name is in the database"<<endl;
+	for (int y=1880; y<=2011; y++)
+	{
+		cout << y << endl;
+		stringstream ss;
+		ss << y;
+		string textFileName= "yob" + ss.str() + ".txt";
+		ifstream inYearFile ( textFileName.c_str() ); 
+		cout << "Filename: " << textFileName << endl;
+		if ( inYearFile.is_open() )
+		{
+			string filesName=" ";
+			validName=0;
+
+			while ( !( inYearFile.eof() || validName==1) )
+			{
+				filesName=" ";
+				string filesGender=" ";
+				string filesStringFrequency=" ";
+				int filesFrequency=0;
+
+				while (filesName!= ",") //get name, puts in char array
+				{
+					getline(inYearFile,filesName);
+				}
+
+				while (filesGender!= ",") //gets gender
+				{
+					getline(inYearFile,filesGender);
+				}
+
+				while (filesStringFrequency!="\n") //gets frequncy of name, in the file year
+				{
+					getline(inYearFile,filesStringFrequency);
+				}
+				stringstream tt;
+				tt << (filesStringFrequency);
+				tt >> filesFrequency;
+
+				if (filesName==name)
+				{
+					validName=1;
+				}
+			}
+		}
+		
+		inYearFile.close ();
+	}
+
+	return validName;
+}
+
+void babystat::findFrequency(int whichVector)
+{
+	cout << "Finding the frequency..." << endl;
+	for (int y=1880; y<=2011; y++) //loops through all file
+	{
+		stringstream ss;
+		ss << y;
+		string textFileName= "yob" + ss.str() + ".txt";
+		ifstream inYearFile ( textFileName.c_str() ); 
+		if ( inYearFile.is_open() ) //reads file if it is open
+		{
+			string filesName=" ";
+			bool namePresence=0;
+
+			while ( !(inYearFile.eof()) ) 
+			{
+				filesName=" ";
+				string filesStringGender=" ";
+				char filesGender=' ';
+				string filesStringFrequency=" ";
+				int filesFrequency=0;
+
+				while (filesName!= ",") //get name as string
+				{
+					getline(inYearFile,filesName,',');
+				}
+
+				while (filesStringGender!= ",") //gets gender as string
+				{
+					getline(inYearFile,filesStringGender);
+				}
+				filesGender=filesStringGender[0]; //changes gender to char
+
+				while (filesStringFrequency!="\n") //gets frequncy of name, in the file year as string
+				{
+					getline(inYearFile,filesStringFrequency);
+				}
+				stringstream tt;
+				tt << filesStringFrequency;
+				tt >> filesFrequency;
+				
+				if (whichVector==0) //for input baby name
+				{
+					if (filesName==name) //if same name+gender, saves the frequency in the relevant vector
+					{
+						if (filesGender==gender)
+						{
+							inputNameFrequency.push_back( filesFrequency );
+							namePresence=1;
+						}
+					}
+				}
+				if (whichVector==1) //for popular boy name
+				{
+					if (filesName==mostPopBoy) //if same name+gender, saves the frequency in relevant vector
+					{
+						if (filesGender=='M')
+						{
+							popularBoyFrequency.push_back( filesFrequency );
+							namePresence=1;
+						}
+					}
+				}
+				else //for popular girl name
+				{
+					if (filesName==mostPopGirl) //if same name+gender, saves the frequency in the relevant vector
+					{
+						if (filesGender=='F')
+						{
+							popularGirlFrequency.push_back( filesFrequency );
+							namePresence=1;
+						}
+					}
+				}
+			}
+
+			if (namePresence=0)
+			{
+				if (whichVector==0) //for input baby name
+				{
+					inputNameFrequency.push_back( 0 );
+				}
+				if (whichVector==1) //for popular boy name
+				{
+					popularBoyFrequency.push_back( 0 );
+				}
+				else //for popular girl name
+				{
+					popularGirlFrequency.push_back( 0 );
+				}
+			}
+		}
+		
+		inYearFile.close ();
+	}
+}
+
+void babystat::findPopularNames()
+{
+	cout << "Finding the most popular girl and boy name..." << endl;
+	for (int y=1880; y<=2011; y++)
+	{
+		stringstream ss;
+		ss << y;
+		string textFileName= "yob" + ss.str() + ".txt";
+		ifstream inYearFile ( textFileName.c_str() ); 
+		if ( inYearFile.is_open() )
+		{
+			string filesName=" ";
+				//girl
+			int popularGirlFrequency=0;
+			mostPopGirl=" ";
+				//boy
+			int popularBoyFrequency=0;
+			mostPopBoy=" ";
+
+			while ( !(inYearFile.eof()) )
+			{
+				filesName=" ";
+				string filesStringGender=" ";
+				char filesGender=' ';
+				string filesStringFrequency=" ";
+				int filesFrequency=0;
+
+				while (filesName!= ",") //get name, puts in char array
+				{
+					getline(inYearFile,filesName);
+				}
+
+				while (filesStringGender!= ",") //gets gender
+					getline(inYearFile,filesStringGender);
+				filesGender=filesStringGender[0];
+
+				while (filesStringFrequency!="\n") //gets frequncy of name, in the file year
+					getline(inYearFile,filesStringFrequency);
+					stringstream tt;
+					tt << filesStringFrequency;
+					tt >> filesFrequency;
+
+
+				if (filesGender=='M') //if is boy
+				{
+					if (filesFrequency > popularBoyFrequency)	
+					popularBoyFrequency=filesFrequency;
+					mostPopBoy = filesName;
+				}
+				else //if is girl
+				{
+					popularGirlFrequency=filesFrequency;
+					mostPopGirl = filesName;
+				}
+			}
+			
+			inYearFile.close ();
+		}
+	}
+}
+
+void babystat::findPopularFrequency()
+{
+	findPopularNames();
+	findFrequency(1);
+	findFrequency(2);
+}
+
+void babystat::makeOneGraph()
+{
+	cout << "We are now making the graph for the input name" << endl;
+	PicturePtr graph1 = loadPicture("emptygraph.jpg");
+	show (graph1);
+
+	for (int i=0; i<130; i++) //goes through each year
+	{
+		for (int j=0; j< inputNameFrequency[i]; j++)
+		{
+			setPixelColor(graph1, (72+(8*i)+0), (450+(j/125)), 179,61,80);	
+		}
+	}	
+	show (graph1);
+	savePicture(graph1, "babyFrequencyGraph.jpg");
+}
+
+void babystat::makeComboGraph()
+{
+	cout << "We are now making the graph for the most popular girl and boy name in the year given" << endl;
+	PicturePtr graph2 = loadPicture("emptygraph.jpg");
+	show (graph2);
+	for (int i=0; i<130; i++) //original baby
+	{
+		for (int a=0; a<6; a++)
+		{
+			for (int b=-1; b<2; b++)
+			{
+				setPixelColor(graph2, (72+(8*i)+a), (450+(inputNameFrequency[i]/125)+ b), 179,61,80);	
+			}
+		}
+	}
+	for (int i=0; i<130; i++) //popular girl
+	{
+		for (int a=0; a<6; a++)
+		{
+			for (int b=-1; b<2; b++)
+			{
+				setPixelColor(graph2, (72+(8*i)+a), (450+(popularGirlFrequency[i]/125)+ b), 110,193,26);	
+			}
+		}
+	}
+	for (int i=0; i<130; i++) //popular boy
+	{
+		for (int a=0; a<6; a++)
+		{
+			for (int b=-1; b<2; b++)
+			{
+				setPixelColor(graph2, (72+(8*i)+a), (450+(popularBoyFrequency[i]/125)+ b), 26,160,193);	
+			}
+		}
+	}
+	show (graph2);
+	savePicture(graph2,"combinedBabyFrequencyGraph.jpg");
+}
+
+/*
+	[45pix or 3pica] sides of axis
+	[extra 45pix or 3pica] barrier on top
+	[extra 90pix or 6pica] barrier for key on side
+	130 year		   >  (*006) 720  >  852pix or 53.25pica
+		45 left        45+(8*yr)+(0-3)
+	100,000 frequency  >  (/125) 800  >  864pix or 54pica
+		450 bottom     450+(/125)
+*/
+
+int main( int argc, char *argv[] )
+{
+	int repeatVariable=0;
+	string inputName=" ";
+	char inputGender=' ';
+	int inputYear=0;
+
+	while (repeatVariable!=2)
+	{
+		if (argc!=4 || repeatVariable==1) // first argument is ./program
+		{
+			if (argc!=4)
+			{
+				cout << "\nI think you entered the name incorrectly.  Would you please try again?" << endl;
+			}
+			cout << "\nInput Baby Name: ";
+			cin >> inputName;
+			cout << endl;
+			cout << "Input Gender (captial F for female, capital M for male): ";
+			cin >> inputGender;
+			cout << endl;
+			cout << "Input year baby was born: ";
+			cin >>inputYear;
+			cout << endl;
+		}
+		else
+		{
+			inputName = argv[1];
+			inputGender = *argv[2];
+			stringstream tt;
+			tt << argv[3];
+			tt >> inputYear;			
+		}
+
+		babystat thisOneBaby (inputName,inputGender,inputYear);
+		int whichVector=0; //this tells find frequency which name they should be storing the
+		bool validName=thisOneBaby.checkName();
+		if ( validName==1 ) //if the baby name is in the databse
+		{
+			thisOneBaby.findFrequency(0);
+			thisOneBaby.findPopularFrequency();
+			thisOneBaby.makeOneGraph();
+			//thisOneBaby.makeComboGraphs();
+		}
+		else
+		{
+			cout << "Wow, your baby name is so unique that it's not in our database!" << endl;
+		}
+
+		cout << "Do you want to repeat, and make more graphs?  If so, press 1.  If you would like to exit this program, press 2.";
+		cin >> repeatVariable;
+	}
+
+	cout << "Thanks for using my program. \nHave a nice day!" << endl;
+
+	return 0;
+}
