@@ -1,0 +1,82 @@
+#include <Myro.h>
+#include <iostream>
+using namespace std;
+
+
+void run()
+{
+    robot.forward(2,1.8); //straight for 4 units; top right line going up
+    robot.turnLeft (1,.8); //turn 60 degrees left
+    robot.forward (2,2); //straight for 4 units; top left line going down
+    robot.turnLeft (1,.88); //turn 60 degrees left
+    robot.forward (2,.82); //straight for 2 units; bottom left line going sraight right
+    //////////
+    robot.turnLeft (1,.8); //turn 60 degrees left
+    robot.forward (1,.29); //straight for 1 unit; blt, bottom right going up
+    //--
+    robot.turnLeft (1,.8); //turn 60 degrees left
+    robot.forward (1,.3); //straight for 1 unit; blt, bottom center going down
+    //--
+    robot.turnRight (1,.81); //turn 60 degrees right
+    robot.forward (1,.3); //straight for 1 unit, blt, bottom left going up
+    //--
+    robot.turnRight (1,.8); //turn 60 degrees right
+    robot.forward (1,.3); //straight for 1 unit; blt, straight line going right
+    //--
+    robot.turnLeft (1,.8); //turn 60 degrees left
+    robot.forward (1,.29); //straight for 1 unit; blt, top going up
+    //////////
+    robot.turnRight (1,.81); //turn 60 degrees right
+    robot.forward (1,.27); //straight for 1 unit; tt, bottom right going right
+    //--
+    robot.turnLeft (1,.8); //turn 60 degrees left
+    robot.forward (1,.27); //straight for 1 unit; tt, top left going up
+    //--
+    robot.turnRight (1,.815); //turn 60 degrees right 
+    robot.forward (1,.3); //straight for 1 unit; tt, top center going right
+    //--
+    robot.turnRight (1,.81); //turn 60 degrees right
+    robot.forward (1,.26); //straight for 1 unit; tt, top right going down
+    //--
+    robot.turnLeft (1,.81); //turn 60 degrees left
+    robot.forward (1,.3); //straight for 1 unit; tt, bottom right going right
+    //////////
+    robot.turnRight (1,.8); //turn 60 degrees right
+    robot.forward (1,.28); //straight for 1 unit; brt, top going down
+    //--
+    robot.turnLeft (1,.81); //turn 60 degrees left
+    robot.forward (1,.28); //straight for 1 unit; brt, middle going right
+    //--
+    robot.turnRight (1,.8); //turn 60 degrees right
+    robot.forward (1,.3); //straight for 1 unit; brt, bottom right going down
+    //--
+    robot.turnRight (1,.8); //turn 60 degrees right
+    robot.forward (1,.3); //straight for 1 unit; brt, bottom middle going up
+    //--
+    robot.turnLeft (1,.8); //turn 60 degrees left
+    robot.forward (1,.3); //straight for 1 unit; brt, bottom left going down
+    //--
+    robot.turnLeft (1,.79); //turn 60 degrees left; brt, bottom bottom going right
+    robot.forward (2, .6);
+}
+
+void test()
+{
+    robot.forward (2,2); //straight for 4 units
+    //robot.turnLeft (1,1); //turn 60 degrees left
+    robot.turnRight (1,1); //turn 60 degrees left
+    robot.forward (1,1);
+}
+
+int main(){
+
+    connect("/dev/ttyS0");
+    
+    cout << "Hello, my name is " << robot.getName() << endl;
+    run ();
+    //test();
+    
+    cout << "Hope you enjoyed our program!" << endl;
+    disconnect();
+    return 0;
+}
