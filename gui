@@ -1,0 +1,217 @@
+#include <Myro.h>
+#include <iostream>
+using namespace std;
+
+void drawSkull()
+{
+    //Eyes
+    robot.motors(-0.7,1.0);
+    wait(3.6);
+    robot.motors(0,0);
+    robot.beep(0.25,587.23);
+    cout << "Please remove pen." << endl;
+    wait(2);
+    robot.beep(0.25,587.23);
+    robot.backward(1,0.45);
+    robot.beep(0.25,587.23);
+    cout << "Please place pen back." << endl;
+    wait(2);
+    robot.beep(0.25,587.23);
+    robot.motors(-0.7,1.0);
+    wait(3.7);
+
+    robot.motors(0,0);
+    robot.beep(0.25,587.23);
+    cout << "Please remove pen." << endl;
+    wait(2);
+    robot.beep(0.25,587.23);
+
+    //Nose
+    robot.forward(1,0.2);
+    robot.turnRight(1,1);
+    robot.beep(0.25,587.23);
+    cout << "Please place pen back." << endl;
+    wait(2);
+    robot.beep(0.25,587.23);
+
+    for( int n=1; n<=3; n++)
+      {
+    robot.forward(1,0.1);
+    robot.turnLeft(1,1);
+      }
+
+    robot.beep(0.25,587.23);
+    cout << "Please remove pen." << endl;
+    wait(2);
+    robot.beep(0.25,587.23);
+    robot.turnLeft(1,0.75);
+    robot.forward(1,0.4);
+    robot.turnRight(1,0.25);
+    robot.beep(0.25,587.23);
+    cout << "Please place pen back." << endl;
+    wait(2);
+    robot.beep(0.25,587.23);
+    
+
+    //Skull
+
+    robot.motors(-0.5,1.0);
+    wait(3);
+    robot.motors(0,0);
+    robot.turnRight(1,1);
+    robot.motors(0,1.0);
+     wait(3.5);
+     robot.motors(0,0);
+    robot.turnRight(1,1);
+    robot.motors(-0.5,1.0);
+     wait(3);
+     robot.motors(0,0);
+ 
+     
+     //Teeth
+     robot.turnRight(1,1.35);
+     robot.forward(1,0.25);
+     robot.turnLeft(1,0.75);
+
+     for(int n=1; n<=7; n++)
+       {
+     robot.forward(1,0.075);
+     robot.turnLeft(1,0.75);
+     robot.forward(1,0.15);
+     robot.backward(1,0.15);
+     robot.turnRight(1,0.75);
+         }         
+
+     robot.turnLeft(1,0.75);
+     robot.forward(1,0.25);
+
+     robot.beep(0.25,587.23);
+     cout << "Please remove pen." << endl;
+     wait(2);
+     robot.beep(0.25,587.23);
+}
+
+void drawStar()
+{
+    robot.turnRight(2,1.25);
+    robot.forward(10,2);
+    robot.turnRight(2,1.25);
+    robot.forward(10,2);
+    robot.turnRight(2,1.25);
+    robot.forward(10,2);
+    robot.turnRight(2,1.25);
+    robot.forward(10,2);
+    robot.turnRight(2,1.25);
+    robot.forward(10,2);
+}
+
+void drawHeart()
+{
+    robot.motors(0,1);
+    wait(4);
+    robot.forward(1,1);
+    robot.turnLeft(1,.65);
+    robot.forward(1,1);
+    robot.motors(0,1);
+    wait(4);
+    robot.stop();
+}
+
+void drawLove() //draws the word love
+{
+    robot.motors(1.0,1.0);
+    wait(1);
+    robot.motors(-1,1.0);
+    wait(.8);
+    robot.motors(1.0,1.0);
+    wait(.5);
+    robot.stop();
+    wait(.5);
+    robot.motors(1,1);
+    wait(.5);
+    robot.motors(0, 1);
+    wait(6);
+    robot.stop();
+    wait(0.7);
+    robot.motors(1.0,1.0);      
+    wait(.3);
+    robot.motors(0,1);
+    wait(.8);
+    robot.motors(1,1);  
+    wait(1);
+    robot.motors(-1,-1);
+    wait(1);
+    robot.motors(-1,0);
+    wait(.8);
+    robot.motors(1,1);
+    wait(1);
+    robot.stop();
+    wait(.8);
+    robot.motors(-1,-1);
+    wait(1);
+    robot.motors(1,0);
+    wait(.8);
+    robot.motors(1,1);
+    wait(.5);
+    robot.motors(1,0);
+    wait(2);
+    robot.motors(1,-1);//turn right w/o moving
+    wait(.8);
+    robot.motors(1,1);
+    wait(1);
+    robot.motors(-1,1);
+    wait(.8);
+    robot.motors(0,1);
+    wait(2);
+}
+
+void test() //to check if picture is 512x512 pixels
+{
+    PicturePtr graph1 = loadPicture("icons.jpg");
+    for (int i=0; i<511; i++) //makes original baby graph
+    {
+        for (int b=0; b<6; b++)
+            {
+                setPixelColor(graph1, i, 511-b, 179,61,80);   
+                setPixelColor(graph1, 511-b, i, 179,61,80);
+            }
+    }
+
+    show (graph1);
+}
+
+int main(){
+
+    connect("/dev/ttyS0");
+    //test ();
+    
+    GraphWin win("Graphical Interface", 512, 512);
+    PicturePtr pic1 = loadPicture("icons.jpg");
+    win.setBackground ( pic1 );
+
+    while( !(win.isClosed()) )
+    {
+        Point m = win.getMouse();
+        if ( m.getX()>=0 && m.getX()<256 && m.getY()>=0 && m.getY()<256)
+        {
+            drawSkull();
+        }
+        else if ( m.getX()>=0 && m.getX()<256 && m.getY()>=256 && m.getY()<=512)
+        {
+            drawHeart();
+        }
+        else if ( m.getX()>=256 && m.getX()<=512 && m.getY()>=0 && m.getY()<256)
+        {
+            drawStar();
+        }
+        else //love
+        {
+            drawLove();
+        }
+
+    }
+    
+    cout << "Hope you enjoyed our program!" << endl;
+    disconnect();
+    return 0;
+}
